@@ -2,7 +2,7 @@
 
 use Meletisf\Settings\Settings;
 
-if (! function_exists('settings')) {
+if (!function_exists('settings')) {
 
     /**
      * @param string|array|null $param
@@ -23,5 +23,4 @@ if (! function_exists('settings')) {
 
         return $service->get($param);
     }
-
 }

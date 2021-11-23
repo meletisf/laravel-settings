@@ -3,5 +3,5 @@
 return [
     'table' => 'settings',
 
-    'preload_all' => true
+    'preload_all' => true,
 ];
