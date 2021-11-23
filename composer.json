@@ -1,0 +1,47 @@
+{
+    "name": "meletisf/laravel-settings",
+    "description": "Laravel Settings allows you to have configuration variables inside the database",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Meletios Flevarakis",
+            "email": "foss@flevarakis.xyz"
+        }
+    ],
+    "require": {
+        "php": ">=8.0",
+        "ext-json": "*",
+        "bensampo/laravel-enum": "^4.1",
+        "laravel/framework": "^8.73"
+    },
+    "require-dev": {
+        "nunomaduro/larastan": "^1.0",
+        "friendsofphp/php-cs-fixer": "^3.3",
+        "phpunit/phpunit": "^9.5",
+        "orchestra/testbench": "^6.23"
+    },
+    "autoload": {
+        "psr-4": {
+            "Meletisf\\Settings\\": "src/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Meletisf\\Settings\\Tests\\": "tests/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Meletisf\\Settings\\LaravelSettingsServiceProvider"
+            ],
+            "aliases": {
+                "LaravelSettings": "Meletisf\\Settings\\Facades\\LaravelSettings"
+            }
+        }
+    }
+}
