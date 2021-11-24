@@ -18,20 +18,20 @@ class Settings
 {
     private array $cache = ['casted' => []];
 
-    public function __construct(array $config)
+    public function __construct(private array $config)
     {
-        if ($config['preload_all']) {
-            $this->preload();
+        if ($this->config['preload_all']) {
+            $this->load();
         }
     }
 
-    public function preload(): void
+    public function load(): void
     {
         $settings = SettingModel::all();
 
         /** @var SettingModel $setting */
         foreach ($settings as $setting) {
-            $this->cache['casted'][$setting->key] = $this->cast($setting->value, $setting->cast_to);
+            $this->cache['casted'][$setting->key] = $this->unserialize($setting->value, $setting->cast_to);
         }
     }
 
@@ -41,8 +41,7 @@ class Settings
             return $this->cache['casted'][$key];
         }
 
-        /** @var SettingModel|null $setting */
-        $setting = SettingModel::where('key', $key)->first();
+        $setting = $this->getSettingsModel($key);
 
         if (!$setting) {
             return null;
@@ -52,7 +51,7 @@ class Settings
             return $setting->value;
         }
 
-        $cast = $this->cast($setting->value, $setting->cast_to);
+        $cast = $this->unserialize($setting->value, $setting->cast_to);
         $this->cache['casted'][$key] = $cast;
 
         return $cast;
@@ -60,8 +59,7 @@ class Settings
 
     public function set(string $key, mixed $value): bool
     {
-        /** @var SettingModel|null $setting */
-        $setting = SettingModel::where('key', $key)->first();
+        $setting = $this->getSettingsModel($key);
 
         if ($setting) {
             if ($setting->is_immutable) {
@@ -73,11 +71,28 @@ class Settings
             $setting->cast_to = $this->guessType($value);
         }
 
-        $setting->value = $this->toString($value, $setting->cast_to);
+        $setting->value = $this->serialize($value, $setting->cast_to);
 
         $this->cache['casted'][$key] = $value;
 
         return $setting->save();
+    }
+
+    public function remove(string $key): bool
+    {
+        $setting = $this->getSettingsModel($key);
+
+        if (! $setting) {
+            return false;
+        }
+
+        if ($setting->is_immutable) {
+            return false;
+        }
+
+        unset($this->cache['casted'][$key]);
+
+        return $setting->delete();
     }
 
     public function getCache(): array
@@ -85,32 +100,42 @@ class Settings
         return $this->cache;
     }
 
+    private function getSettingsModel(string $key): SettingModel|null
+    {
+        return SettingModel::where('key', $key)->first();
+    }
+
     private function guessType(mixed $value): string
     {
+        if (is_subclass_of($value, "Illuminate\Database\Eloquent\Model")) {
+            return SettingType::Model;
+        }
+
         return match (gettype($value)) {
             'integer'   => SettingType::Integer,
             'double'    => SettingType::Float,
+            'string'    => SettingType::String,
             'boolean'   => SettingType::Boolean,
             'array'     => SettingType::Array,
-            'object'    => SettingType::Serialized,
-            default     => SettingType::String // + string
+            default     => SettingType::Serialized
         };
     }
 
-    private function cast(string $original, string $castTo): mixed
+    private function unserialize(string $value, string $castTo): mixed
     {
         return match ($castTo) {
-            SettingType::Integer        => (int) $original,
-            SettingType::Float          => (float) $original,
-            SettingType::String         => $original,
-            SettingType::Boolean        => (bool) $original,
-            SettingType::Array          => json_decode($original, true),
-            SettingType::Serialized     => unserialize($original),
-            default                     => (string) $original
+            SettingType::Integer        => (int) $value,
+            SettingType::Float          => (float) $value,
+            SettingType::String         => $value,
+            SettingType::Boolean        => (bool) $value,
+            SettingType::Array          => json_decode($value, true),
+            SettingType::Serialized     => unserialize($value),
+            SettingType::Model          => (new $this->config['model_processor']($value))->unserialize(),
+            default                     => (string) $value
         };
     }
 
-    private function toString(mixed $value, string $from): string
+    private function serialize(mixed $value, string $from): string
     {
         return match ($from) {
             SettingType::String, SettingType::Integer, SettingType::Float => $casted = $value,

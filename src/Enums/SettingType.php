@@ -20,6 +20,7 @@ use BenSampo\Enum\Enum;
  * @method static static Boolean()
  * @method static static Array()
  * @method static static Serialized()
+ * @method static static Model()
  */
 final class SettingType extends Enum
 {
@@ -29,4 +30,5 @@ final class SettingType extends Enum
     public const Boolean = 'boolean';
     public const Array = 'array';
     public const Serialized = 'serialized';
+    public const Model = 'model';
 }
