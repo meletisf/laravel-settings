@@ -5,5 +5,5 @@ return [
 
     'preload_all' => true,
 
-    'model_processor' => \Meletisf\Settings\ModelProcessor::class
+    'model_processor' => \Meletisf\Settings\ModelProcessor::class,
 ];

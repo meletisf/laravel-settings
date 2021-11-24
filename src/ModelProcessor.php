@@ -12,34 +12,33 @@
 namespace Meletisf\Settings;
 
 use Illuminate\Database\Eloquent\Model;
-use JetBrains\PhpStorm\Pure;
 
-class ModelProcessor {
-
-    public function __construct(private string $model) {}
+class ModelProcessor
+{
+    public function __construct(private string $model)
+    {
+    }
 
     public function unserialize(): Model|null
     {
-        $model = explode(":", $this->model);
+        $model = explode(':', $this->model);
 
         $class = $model[0];
         $id = $model[1];
 
-        if (! class_exists($class)) {
+        if (!class_exists($class)) {
             return null;
         }
 
         try {
             $result = $class::find($id);
-        }
-        catch (\Exception | \Throwable $e) {
+        } catch (\Exception | \Throwable $e) {
             return null;
         }
 
         return $result;
     }
 
-    #[Pure]
     public static function serialize(Model $model): string
     {
         $class = get_class($model);
@@ -47,5 +46,4 @@ class ModelProcessor {
 
         return "{$class}:{$key}";
     }
-
 }

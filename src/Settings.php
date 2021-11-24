@@ -82,7 +82,7 @@ class Settings
     {
         $setting = $this->getSettingsModel($key);
 
-        if (! $setting) {
+        if (!$setting) {
             return false;
         }
 
@@ -130,7 +130,7 @@ class Settings
             SettingType::Boolean        => (bool) $value,
             SettingType::Array          => json_decode($value, true),
             SettingType::Serialized     => unserialize($value),
-            SettingType::Model          => (new $this->config['model_processor']($value))->unserialize(),
+            SettingType::Model          => (new $this->config['model_processor']($value))->unserialize(), // @phpstan-ignore-line
             default                     => (string) $value
         };
     }
