@@ -41,7 +41,7 @@ class Settings
             return $this->cache['casted'][$key];
         }
 
-        $setting = $this->getSettingsModel($key);
+        $setting = $this->getSettingsModelInstance($key);
 
         if (!$setting) {
             return null;
@@ -59,7 +59,7 @@ class Settings
 
     public function set(string $key, mixed $value): bool
     {
-        $setting = $this->getSettingsModel($key);
+        $setting = $this->getSettingsModelInstance($key);
 
         if ($setting) {
             if ($setting->is_immutable) {
@@ -80,7 +80,7 @@ class Settings
 
     public function remove(string $key): bool
     {
-        $setting = $this->getSettingsModel($key);
+        $setting = $this->getSettingsModelInstance($key);
 
         if (!$setting) {
             return false;
@@ -100,9 +100,14 @@ class Settings
         return $this->cache;
     }
 
-    private function getSettingsModel(string $key): SettingModel|null
+    private function getSettingsModelInstance(string $key): SettingModel|null
     {
-        return SettingModel::where('key', $key)->first();
+        return $this->getModel()::where('key', $key)->first();
+    }
+
+    private function getModel(): string
+    {
+        return $this->config['settings_model'];
     }
 
     private function guessType(mixed $value): string
@@ -130,7 +135,7 @@ class Settings
             SettingType::Boolean        => (bool) $value,
             SettingType::Array          => json_decode($value, true),
             SettingType::Serialized     => unserialize($value),
-            SettingType::Model          => (new $this->config['model_processor']($value))->unserialize(), // @phpstan-ignore-line
+            SettingType::Model          => $this->config['model_processor']::unserialize($value), // @phpstan-ignore-line
             default                     => (string) $value
         };
     }
@@ -142,6 +147,7 @@ class Settings
             SettingType::Boolean        => $casted = (string) $value,
             SettingType::Array          => $casted = json_encode($value),
             SettingType::Serialized     => $casted = serialize($value),
+            SettingType::Model          => $casted = $this->config['model_processor']::serialize($value), // @phpstan-ignore-line
             default                     => (string) $value
         };
     }

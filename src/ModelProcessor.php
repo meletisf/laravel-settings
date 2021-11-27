@@ -15,13 +15,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class ModelProcessor
 {
-    public function __construct(private string $model)
+    public static function unserialize(string $fromString): Model|null
     {
-    }
-
-    public function unserialize(): Model|null
-    {
-        $model = explode(':', $this->model);
+        $model = explode(':', $fromString);
 
         $class = $model[0];
         $id = $model[1];
@@ -42,7 +38,7 @@ class ModelProcessor
     public static function serialize(Model $model): string
     {
         $class = get_class($model);
-        $key = $model->getKeyName();
+        $key = $model->getKey();
 
         return "{$class}:{$key}";
     }
