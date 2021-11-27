@@ -36,6 +36,12 @@ class SettingsSeeder extends Seeder {
                 'cast_to' => SettingType::Array
             ],
             [
+                'key' => 'test.serialized',
+                'value' => serialize(new \stdClass()),
+                'is_immutable' => false,
+                'cast_to' => SettingType::Serialized
+            ],
+            [
                 'key' => 'test.immutable',
                 'value' => 'this is immutable',
                 'is_immutable' => true,

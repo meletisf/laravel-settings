@@ -27,7 +27,7 @@ class ModelProcessor
         }
 
         try {
-            $result = $class::find($id);
+            $result = $class::findorFail($id);
         } catch (\Exception | \Throwable $e) {
             return null;
         }

@@ -16,6 +16,9 @@
         <include>
             <directory suffix=".php">src/</directory>
         </include>
+        <exclude>
+            <file>src/Facades/LaravelSettings.php</file>
+        </exclude>
     </coverage>
     <testsuites>
         <testsuite name="Laravel Settings Test Suite">

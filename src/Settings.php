@@ -37,7 +37,7 @@ class Settings
 
     public function get(string $key, bool $ignoreCasting = false): mixed
     {
-        if (array_key_exists($key, $this->cache['casted'])) {
+        if (array_key_exists($key, $this->cache['casted']) && !$ignoreCasting) {
             return $this->cache['casted'][$key];
         }
 
@@ -140,14 +140,14 @@ class Settings
         };
     }
 
-    private function serialize(mixed $value, string $from): string
+    private function serialize(mixed $value, string $type): string
     {
-        return match ($from) {
-            SettingType::String, SettingType::Integer, SettingType::Float => $casted = $value,
-            SettingType::Boolean        => $casted = (string) $value,
-            SettingType::Array          => $casted = json_encode($value),
-            SettingType::Serialized     => $casted = serialize($value),
-            SettingType::Model          => $casted = $this->config['model_processor']::serialize($value), // @phpstan-ignore-line
+        return match ($type) {
+            SettingType::String, SettingType::Integer, SettingType::Float => $value,
+            SettingType::Boolean        => $value? 'true' : 'false',
+            SettingType::Array          => json_encode($value),
+            SettingType::Serialized     => serialize($value),
+            SettingType::Model          => $this->config['model_processor']::serialize($value), // @phpstan-ignore-line
             default                     => (string) $value
         };
     }
