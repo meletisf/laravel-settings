@@ -22,7 +22,7 @@ class SyncSettings extends Command
 
     protected $description = 'Sync the settings which do not exists in the database';
 
-    public function handle()
+    public function handle(): void
     {
         $this->info('Syncing settings...');
         $entries = $this->getExistingEntries();
@@ -62,6 +62,8 @@ class SyncSettings extends Command
     private function getNewModel(): Model
     {
         $class = config('laravel-settings.settings_model');
-        return new $class;
+        /** @var Model $object */
+        $object = new $class;
+        return $object;
     }
 }
