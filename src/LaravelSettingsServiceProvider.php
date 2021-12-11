@@ -36,7 +36,7 @@ class LaravelSettingsServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->commands([
-                SyncSettings::class
+                SyncSettings::class,
             ]);
         }
     }

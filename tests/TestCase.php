@@ -5,9 +5,9 @@ namespace Meletisf\Settings\Tests;
 use JetBrains\PhpStorm\ArrayShape;
 use Meletisf\Settings\LaravelSettingsServiceProvider;
 
-class TestCase extends \Orchestra\Testbench\TestCase {
-
-    #[ArrayShape(['table' => "string", 'preload_all' => "bool", 'settings_model' => "string", 'model_processor' => "string"])]
+class TestCase extends \Orchestra\Testbench\TestCase
+{
+    #[ArrayShape(['table' => 'string', 'preload_all' => 'bool', 'settings_model' => 'string', 'model_processor' => 'string'])]
     protected function getServiceConfiguration(): array
     {
         return [
@@ -24,7 +24,7 @@ class TestCase extends \Orchestra\Testbench\TestCase {
     protected function getPackageProviders($app): array
     {
         return [
-            LaravelSettingsServiceProvider::class
+            LaravelSettingsServiceProvider::class,
         ];
     }
 
@@ -36,8 +36,7 @@ class TestCase extends \Orchestra\Testbench\TestCase {
 
         $this->loadMigrationsFrom([
             '--database' => 'testing',
-            '--path' => realpath(__DIR__ . '/migrations')
+            '--path' => realpath(__DIR__ . '/migrations'),
         ]);
     }
-
 }

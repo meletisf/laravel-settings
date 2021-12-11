@@ -27,5 +27,5 @@ return [
      */
     'required_configuration' => [
 
-    ]
+    ],
 ];

@@ -144,7 +144,7 @@ class Settings
     {
         return match ($type) {
             SettingType::String, SettingType::Integer, SettingType::Float => $value,
-            SettingType::Boolean        => $value? 'true' : 'false',
+            SettingType::Boolean        => $value ? 'true' : 'false',
             SettingType::Array          => json_encode($value),
             SettingType::Serialized     => serialize($value),
             SettingType::Model          => $this->config['model_processor']::serialize($value), // @phpstan-ignore-line

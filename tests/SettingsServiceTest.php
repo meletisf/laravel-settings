@@ -9,17 +9,18 @@ use Meletisf\Settings\Settings;
 use Meletisf\Settings\Tests\Fixtures\Models\User;
 use Meletisf\Settings\Tests\Seeds\SettingsSeeder;
 
-class SettingsServiceTest extends TestCase {
+class SettingsServiceTest extends TestCase
+{
     use RefreshDatabase;
 
-    function setUp(): void
+    public function setUp(): void
     {
         parent::setUp();
         $this->seed(SettingsSeeder::class);
     }
 
     /** @test */
-    function preloads_settings_when_initialized()
+    public function preloads_settings_when_initialized()
     {
         $service = new Settings($this->getServiceConfiguration());
         $this->assertArrayHasKey('test.string', $service->getCache()['casted']);
@@ -27,7 +28,7 @@ class SettingsServiceTest extends TestCase {
     }
 
     /** @test */
-    function load_method_loads_all_the_settings()
+    public function load_method_loads_all_the_settings()
     {
         $service = new Settings(['preload_all' => false]);
         $service->load();
@@ -37,7 +38,7 @@ class SettingsServiceTest extends TestCase {
     }
 
     /** @test */
-    function retrieves_a_settings_using_a_key()
+    public function retrieves_a_settings_using_a_key()
     {
         $service = new Settings($this->getServiceConfiguration());
         $expected = SettingsSeeder::getTestData()[0];
@@ -47,7 +48,7 @@ class SettingsServiceTest extends TestCase {
     }
 
     /** @test */
-    function retrieves_uncached_setting()
+    public function retrieves_uncached_setting()
     {
         $defaults = $this->getServiceConfiguration();
         $defaults['preload_all'] = false;
@@ -60,7 +61,7 @@ class SettingsServiceTest extends TestCase {
     }
 
     /** @test */
-    function returns_null_when_setting_does_not_exist()
+    public function returns_null_when_setting_does_not_exist()
     {
         $service = new Settings($this->getServiceConfiguration());
         $result = $service->get('does.not.exist');
@@ -69,7 +70,7 @@ class SettingsServiceTest extends TestCase {
     }
 
     /** @test */
-    function get_method_can_ignore_casting()
+    public function get_method_can_ignore_casting()
     {
         $service = new Settings($this->getServiceConfiguration());
         $returned = $service->get('test.array', true);
@@ -78,7 +79,7 @@ class SettingsServiceTest extends TestCase {
     }
 
     /** @test */
-    function creates_a_new_setting()
+    public function creates_a_new_setting()
     {
         $service = new Settings($this->getServiceConfiguration());
         $result = $service->set('test.creates_a_new_setting', 'creates_a_new_setting');
@@ -86,35 +87,35 @@ class SettingsServiceTest extends TestCase {
         $this->assertTrue($result);
         $this->assertDatabaseHas('settings', [
             'key' => 'test.creates_a_new_setting',
-            'value' => 'creates_a_new_setting'
+            'value' => 'creates_a_new_setting',
         ]);
         $this->assertArrayHasKey('test.creates_a_new_setting', $service->getCache()['casted']);
     }
 
     /** @test */
-    function updates_existing_setting()
+    public function updates_existing_setting()
     {
         $service = new Settings($this->getServiceConfiguration());
-        $key = "test.string";
-        $newVal = "this is updated string";
+        $key = 'test.string';
+        $newVal = 'this is updated string';
 
         $this->assertDatabaseHas('settings', [
             'key' => $key,
-            'value' => 'this is a string'
+            'value' => 'this is a string',
         ]);
         $result = $service->set($key, $newVal);
 
         $this->assertTrue($result);
         $this->assertDatabaseHas('settings', [
             'key' => $key,
-            'value' => $newVal
+            'value' => $newVal,
         ]);
         $this->assertArrayHasKey($key, $service->getCache()['casted']);
         $this->assertEquals($newVal, $service->getCache()['casted'][$key]);
     }
 
     /** @test */
-    function it_does_not_update_immutable_settings()
+    public function it_does_not_update_immutable_settings()
     {
         $service = new Settings($this->getServiceConfiguration());
         $newVal = 'update immutable';
@@ -122,12 +123,12 @@ class SettingsServiceTest extends TestCase {
 
         $this->assertFalse($result);
         $this->assertDatabaseMissing('settings', [
-            'value' => $newVal
+            'value' => $newVal,
         ]);
     }
 
     /** @test */
-    function removes_a_setting()
+    public function removes_a_setting()
     {
         $service = new Settings($this->getServiceConfiguration());
         $subject = SettingsSeeder::getTestData()[0];
@@ -135,13 +136,13 @@ class SettingsServiceTest extends TestCase {
 
         $this->assertTrue($result);
         $this->assertDatabaseMissing('settings', [
-            'key' => $subject['key']
+            'key' => $subject['key'],
         ]);
         $this->assertArrayNotHasKey($subject['key'], $service->getCache()['casted']);
     }
 
     /** @test */
-    function remove_returns_false_if_setting_does_not_exist()
+    public function remove_returns_false_if_setting_does_not_exist()
     {
         $service = new Settings($this->getServiceConfiguration());
         $result = $service->remove('does.not.exist');
@@ -150,7 +151,7 @@ class SettingsServiceTest extends TestCase {
     }
 
     /** @test */
-    function does_not_remove_immutable_settings()
+    public function does_not_remove_immutable_settings()
     {
         $service = new Settings($this->getServiceConfiguration());
         $key = 'test.immutable';
@@ -159,13 +160,13 @@ class SettingsServiceTest extends TestCase {
 
         $this->assertFalse($result);
         $this->assertDatabaseHas('settings', [
-            'key' => $key
+            'key' => $key,
         ]);
         $this->assertArrayHasKey($key, $service->getCache()['casted']);
     }
 
     /** @test */
-    function get_model_returns_the_correct_model()
+    public function get_model_returns_the_correct_model()
     {
         $service = new Settings($this->getServiceConfiguration());
         $returned = PHPUnitUtil::callMethod($service, 'getModel', []);
@@ -175,7 +176,7 @@ class SettingsServiceTest extends TestCase {
     }
 
     /** @test */
-    function guess_type_guesses_model_correctly()
+    public function guess_type_guesses_model_correctly()
     {
         $service = new Settings($this->getServiceConfiguration());
 
@@ -188,7 +189,7 @@ class SettingsServiceTest extends TestCase {
     }
 
     /** @test */
-    function guess_type_guesses_integer_correctly()
+    public function guess_type_guesses_integer_correctly()
     {
         $service = new Settings($this->getServiceConfiguration());
         $returned = PHPUnitUtil::callMethod($service, 'guessType', [1234]);
@@ -197,7 +198,7 @@ class SettingsServiceTest extends TestCase {
     }
 
     /** @test */
-    function guess_type_guesses_float_correctly()
+    public function guess_type_guesses_float_correctly()
     {
         $service = new Settings($this->getServiceConfiguration());
         $returned = PHPUnitUtil::callMethod($service, 'guessType', [3.141]);
@@ -206,7 +207,7 @@ class SettingsServiceTest extends TestCase {
     }
 
     /** @test */
-    function guess_type_guesses_boolean_correctly()
+    public function guess_type_guesses_boolean_correctly()
     {
         $service = new Settings($this->getServiceConfiguration());
         $returned = PHPUnitUtil::callMethod($service, 'guessType', [true]);
@@ -215,7 +216,7 @@ class SettingsServiceTest extends TestCase {
     }
 
     /** @test */
-    function guess_type_guesses_array_correctly()
+    public function guess_type_guesses_array_correctly()
     {
         $service = new Settings($this->getServiceConfiguration());
         $returned = PHPUnitUtil::callMethod($service, 'guessType', [['first', 'second']]);
@@ -224,7 +225,7 @@ class SettingsServiceTest extends TestCase {
     }
 
     /** @test */
-    function guess_type_guesses_serialized_correctly()
+    public function guess_type_guesses_serialized_correctly()
     {
         $service = new Settings($this->getServiceConfiguration());
         $returned = PHPUnitUtil::callMethod($service, 'guessType', [new \stdClass()]);
@@ -233,7 +234,7 @@ class SettingsServiceTest extends TestCase {
     }
 
     /** @test */
-    function unserializes_values_correctly()
+    public function unserializes_values_correctly()
     {
         $service = new Settings($this->getServiceConfiguration());
 
@@ -252,12 +253,12 @@ class SettingsServiceTest extends TestCase {
         $array = PHPUnitUtil::callMethod($service, 'unserialize', ['["first", "second"]', SettingType::Array]);
         $this->assertIsArray($array);
 
-        $serialized = PHPUnitUtil::callMethod($service, 'unserialize', ["O:8:\"stdClass\":0:{}", SettingType::Serialized]);
+        $serialized = PHPUnitUtil::callMethod($service, 'unserialize', ['O:8:"stdClass":0:{}', SettingType::Serialized]);
         $this->assertIsObject($serialized);
     }
 
     /** @test */
-    function unserializes_model_correctly()
+    public function unserializes_model_correctly()
     {
         $service = new Settings($this->getServiceConfiguration());
 
@@ -274,7 +275,7 @@ class SettingsServiceTest extends TestCase {
     }
 
     /** @test */
-    function serializes_values_correctly()
+    public function serializes_values_correctly()
     {
         $service = new Settings($this->getServiceConfiguration());
 
@@ -297,7 +298,7 @@ class SettingsServiceTest extends TestCase {
 
         $serialized = PHPUnitUtil::callMethod($service, 'serialize', [new \stdClass(), SettingType::Serialized]);
         $this->assertIsString($serialized);
-        $this->assertEquals("O:8:\"stdClass\":0:{}", $serialized);
+        $this->assertEquals('O:8:"stdClass":0:{}', $serialized);
 
         $testModel = Setting::first();
         $model = PHPUnitUtil::callMethod($service, 'serialize', [$testModel, SettingType::Model]);

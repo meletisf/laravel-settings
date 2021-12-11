@@ -41,11 +41,10 @@ class SyncSettings extends Command
         $log = [];
 
         foreach ($requiredConfiguration as $k => $v) {
-            if (! in_array($k, $existingKeys)) {
+            if (!in_array($k, $existingKeys)) {
                 $service->set($k, $v);
                 $log[] = [$k, $service->get($k, true), 'created'];
-            }
-            else {
+            } else {
                 $log[] = [$k, $service->get($k, true), 'ignored, existing value'];
             }
         }
@@ -64,6 +63,7 @@ class SyncSettings extends Command
         $class = config('laravel-settings.settings_model');
         /** @var Model $object */
         $object = new $class;
+
         return $object;
     }
 }
