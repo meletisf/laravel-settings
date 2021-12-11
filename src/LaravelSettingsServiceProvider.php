@@ -12,6 +12,7 @@
 namespace Meletisf\Settings;
 
 use Illuminate\Support\ServiceProvider;
+use Meletisf\Settings\Console\SyncSettings;
 
 class LaravelSettingsServiceProvider extends ServiceProvider
 {
@@ -32,5 +33,11 @@ class LaravelSettingsServiceProvider extends ServiceProvider
         ], 'laravel2fa-migrations');
 
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                SyncSettings::class
+            ]);
+        }
     }
 }
