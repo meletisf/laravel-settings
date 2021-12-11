@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://packagist.org/packages/meletisf/laravel-settings" target="_blank">
-        <img src="https://github.com/meletisf/art/blob/master/laravel-settings/Settings-01.png?raw=true" alt="Settings-01" border="0">
+        <img src="https://github.com/meletisf/art/blob/master/laravel-settings/Settings-01.png?raw=true" alt="Settings-01" border="0" width="500px">
     </a>
 </p>
 
