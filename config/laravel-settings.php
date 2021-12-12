@@ -23,7 +23,8 @@ return [
     'model_processor' => \Meletisf\Settings\ModelProcessor::class,
 
     /*
-     * Which settings should always exist in teh database.
+     * Which settings should always exist in the database.
+     * Add them with key => value format.
      */
     'required_configuration' => [
 
