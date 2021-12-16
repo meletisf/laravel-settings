@@ -22,6 +22,11 @@ return [
      */
     'model_processor' => \Meletisf\Settings\ModelProcessor::class,
 
+    /**
+     * Broadcast events when settings are created, updated or deleted
+     */
+    'broadcast_events' => true,
+
     /*
      * Which settings should always exist in the database.
      * Add them with key => value format.

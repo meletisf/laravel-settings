@@ -12,16 +12,23 @@
 namespace Meletisf\Settings;
 
 use Meletisf\Settings\Enums\SettingType;
+use Meletisf\Settings\Events\SettingCreated;
+use Meletisf\Settings\Events\SettingDeleted;
+use Meletisf\Settings\Events\SettingUpdated;
 use Meletisf\Settings\Models\Setting as SettingModel;
 
 class Settings
 {
     private array $cache = ['casted' => []];
+    private bool $broadcastEvents = false;
 
     public function __construct(private array $config)
     {
         if ($this->config['preload_all']) {
             $this->load();
+        }
+        if (array_key_exists('broadcast_events', $this->config)) {
+            $this->broadcastEvents = $this->config['broadcast_events'];
         }
     }
 
@@ -59,6 +66,7 @@ class Settings
 
     public function set(string $key, mixed $value): bool
     {
+        $created = false;
         $setting = $this->getSettingsModelInstance($key);
 
         if ($setting) {
@@ -69,11 +77,17 @@ class Settings
             $setting = new SettingModel();
             $setting->key = $key;
             $setting->cast_to = $this->guessType($value);
+            $created = true;
         }
 
         $setting->value = $this->serialize($value, $setting->cast_to);
 
         $this->cache['casted'][$key] = $value;
+
+        if ($this->broadcastEvents) {
+            if ($created) event(new SettingCreated($key, $setting->value));
+            else event(new SettingUpdated($key, $setting->value));
+        }
 
         return $setting->save();
     }
@@ -91,6 +105,10 @@ class Settings
         }
 
         unset($this->cache['casted'][$key]);
+
+        if ($this->broadcastEvents) {
+            event(new SettingDeleted($key));
+        }
 
         return $setting->delete();
     }

@@ -3,7 +3,11 @@
 namespace Meletisf\Settings\Tests;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 use Meletisf\Settings\Enums\SettingType;
+use Meletisf\Settings\Events\SettingCreated;
+use Meletisf\Settings\Events\SettingDeleted;
+use Meletisf\Settings\Events\SettingUpdated;
 use Meletisf\Settings\Models\Setting;
 use Meletisf\Settings\Settings;
 use Meletisf\Settings\Tests\Fixtures\Models\User;
@@ -81,6 +85,7 @@ class SettingsServiceTest extends TestCase
     /** @test */
     public function creates_a_new_setting()
     {
+        Event::fake();
         $service = new Settings($this->getServiceConfiguration());
         $result = $service->set('test.creates_a_new_setting', 'creates_a_new_setting');
 
@@ -90,11 +95,13 @@ class SettingsServiceTest extends TestCase
             'value' => 'creates_a_new_setting',
         ]);
         $this->assertArrayHasKey('test.creates_a_new_setting', $service->getCache()['casted']);
+        Event::assertDispatched(SettingCreated::class);
     }
 
     /** @test */
     public function updates_existing_setting()
     {
+        Event::fake();
         $service = new Settings($this->getServiceConfiguration());
         $key = 'test.string';
         $newVal = 'this is updated string';
@@ -112,11 +119,13 @@ class SettingsServiceTest extends TestCase
         ]);
         $this->assertArrayHasKey($key, $service->getCache()['casted']);
         $this->assertEquals($newVal, $service->getCache()['casted'][$key]);
+        Event::assertDispatched(SettingUpdated::class);
     }
 
     /** @test */
     public function it_does_not_update_immutable_settings()
     {
+        Event::fake();
         $service = new Settings($this->getServiceConfiguration());
         $newVal = 'update immutable';
         $result = $service->set('test.immutable', $newVal);
@@ -125,11 +134,13 @@ class SettingsServiceTest extends TestCase
         $this->assertDatabaseMissing('settings', [
             'value' => $newVal,
         ]);
+        Event::assertNotDispatched(SettingUpdated::class);
     }
 
     /** @test */
     public function removes_a_setting()
     {
+        Event::fake();
         $service = new Settings($this->getServiceConfiguration());
         $subject = SettingsSeeder::getTestData()[0];
         $result = $service->remove($subject['key']);
@@ -139,6 +150,7 @@ class SettingsServiceTest extends TestCase
             'key' => $subject['key'],
         ]);
         $this->assertArrayNotHasKey($subject['key'], $service->getCache()['casted']);
+        Event::assertDispatched(SettingDeleted::class);
     }
 
     /** @test */
@@ -153,6 +165,7 @@ class SettingsServiceTest extends TestCase
     /** @test */
     public function does_not_remove_immutable_settings()
     {
+        Event::fake();
         $service = new Settings($this->getServiceConfiguration());
         $key = 'test.immutable';
 
@@ -163,6 +176,7 @@ class SettingsServiceTest extends TestCase
             'key' => $key,
         ]);
         $this->assertArrayHasKey($key, $service->getCache()['casted']);
+        Event::assertNotDispatched(SettingDeleted::class);
     }
 
     /** @test */

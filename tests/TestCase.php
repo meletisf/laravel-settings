@@ -7,8 +7,7 @@ use Meletisf\Settings\LaravelSettingsServiceProvider;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
-    #[ArrayShape(['table' => 'string', 'preload_all' => 'bool', 'settings_model' => 'string', 'model_processor' => 'string'])]
-    protected function getServiceConfiguration(): array
+    #[ArrayShape(['table' => "string", 'preload_all' => "bool", 'settings_model' => "string", 'model_processor' => "string", 'broadcast_events' => "bool"])] protected function getServiceConfiguration(): array
     {
         return [
             'table' => 'settings',
@@ -18,6 +17,8 @@ class TestCase extends \Orchestra\Testbench\TestCase
             'settings_model' => \Meletisf\Settings\Models\Setting::class,
 
             'model_processor' => \Meletisf\Settings\ModelProcessor::class,
+
+            'broadcast_events' => true
         ];
     }
 
