@@ -22,7 +22,7 @@ For detailed documentation, please visit the [Wiki](https://github.com/meletisf/
 
 ## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel2FA, please send an e-mail to  [foss@flevarakis.xyz](mailto:foss@flevarakis.xyz). All security vulnerabilities will be promptly addressed.
+If you discover a security vulnerability within Laravel Settings, please send an e-mail to  [foss@flevarakis.xyz](mailto:foss@flevarakis.xyz). All security vulnerabilities will be promptly addressed.
 
 ## License
 

@@ -11,24 +11,15 @@
 
 namespace Meletisf\Settings\Enums;
 
-use BenSampo\Enum\Enum;
-
-/**
- * @method static static Integer()
- * @method static static Float()
- * @method static static String()
- * @method static static Boolean()
- * @method static static Array()
- * @method static static Serialized()
- * @method static static Model()
- */
-final class SettingType extends Enum
+enum SettingType: string
 {
-    public const Integer = 'integer';
-    public const Float = 'float';
-    public const String = 'string';
-    public const Boolean = 'boolean';
-    public const Array = 'array';
-    public const Serialized = 'serialized';
-    public const Model = 'model';
+    use Arrayable;
+
+    case Integer = 'integer';
+    case Float = 'float';
+    case String = 'string';
+    case Boolean = 'boolean';
+    case Array = 'array';
+    case Serialized = 'serialized';
+    case Model = 'model';
 }

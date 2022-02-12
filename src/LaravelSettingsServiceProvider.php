@@ -30,7 +30,7 @@ class LaravelSettingsServiceProvider extends ServiceProvider
         ], 'settings-config');
         $this->publishes([
             __DIR__ . '/../database/migrations' => database_path('migrations'),
-        ], 'laravel2fa-migrations');
+        ], 'settings-migrations');
 
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 

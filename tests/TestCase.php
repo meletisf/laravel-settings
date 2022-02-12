@@ -7,20 +7,21 @@ use Meletisf\Settings\LaravelSettingsServiceProvider;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
-    #[ArrayShape(['table' => "string", 'preload_all' => "bool", 'settings_model' => "string", 'model_processor' => "string", 'broadcast_events' => "bool"])] protected function getServiceConfiguration(): array
-    {
-        return [
-            'table' => 'settings',
+    #[ArrayShape(['table' => 'string', 'preload_all' => 'bool', 'settings_model' => 'string', 'model_processor' => 'string', 'broadcast_events' => 'bool'])]
+     protected function getServiceConfiguration(): array
+     {
+         return [
+                'table' => 'settings',
 
-            'preload_all' => true,
+                'preload_all' => true,
 
-            'settings_model' => \Meletisf\Settings\Models\Setting::class,
+                'settings_model' => \Meletisf\Settings\Models\Setting::class,
 
-            'model_processor' => \Meletisf\Settings\ModelProcessor::class,
+                'model_processor' => \Meletisf\Settings\ModelProcessor::class,
 
-            'broadcast_events' => true
-        ];
-    }
+                'broadcast_events' => true,
+            ];
+     }
 
     protected function getPackageProviders($app): array
     {

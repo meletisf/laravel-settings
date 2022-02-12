@@ -183,7 +183,7 @@ class SettingsServiceTest extends TestCase
     public function get_model_returns_the_correct_model()
     {
         $service = new Settings($this->getServiceConfiguration());
-        $returned = PHPUnitUtil::callMethod($service, 'getModel', []);
+        $returned = PHPUnitUtil::callMethod($service, 'getModelFqn', []);
         $fromConfig = $this->getServiceConfiguration()['settings_model'];
 
         $this->assertEquals($fromConfig, $returned);

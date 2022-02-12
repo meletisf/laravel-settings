@@ -20,12 +20,17 @@ class SyncSettings extends Command
 {
     protected $signature = 'settings:sync';
 
-    protected $description = 'Sync the settings which do not exists in the database';
+    protected $description = 'Sync the settings which do not exist in the database';
 
-    public function handle(): void
+    public function handle(): int
     {
         $this->info('Syncing settings...');
-        $entries = $this->getExistingEntries();
+
+        /** @var Settings $service */
+        $service = resolve('laravel-settings');
+
+        $entries = $this->getExistingEntries($service->getModelFqn());
+
         $requiredConfiguration = config('laravel-settings.required_configuration');
 
         $existingKeys = [];
@@ -35,35 +40,31 @@ class SyncSettings extends Command
             $existingKeys[] = $entry->key;
         }
 
-        /** @var Settings $service */
-        $service = resolve('laravel-settings');
-
         $log = [];
 
         foreach ($requiredConfiguration as $k => $v) {
+            // only sync settings that do not already exist in the database
             if (!in_array($k, $existingKeys)) {
-                $service->set($k, $v);
+                // if a value is an array, then the is_immutable flag has been set too
+                if (is_array($v)) {
+                    $service->set($k, $v[0], $v[1]);
+                } else {
+                    $service->set($k, $v);
+                }
                 $log[] = [$k, $service->get($k, true), 'created'];
             } else {
-                $log[] = [$k, $service->get($k, true), 'ignored, existing value'];
+                $log[] = [$k, $service->get($k, true), 'existing value'];
             }
         }
 
         $this->info('Settings synced:');
         $this->table(['Key', 'Value', 'Action'], $log);
+
+        return self::SUCCESS;
     }
 
-    private function getExistingEntries(): \Illuminate\Database\Eloquent\Collection
+    private function getExistingEntries(string $model): \Illuminate\Database\Eloquent\Collection
     {
-        return $this->getNewModel()::all();
-    }
-
-    private function getNewModel(): Model
-    {
-        $class = config('laravel-settings.settings_model');
-        /** @var Model $object */
-        $object = new $class;
-
-        return $object;
+        return $model::all();
     }
 }

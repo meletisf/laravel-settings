@@ -17,5 +17,7 @@ class SettingCreated
 {
     use Dispatchable;
 
-    public function __construct(public string $setting, public string $value) {}
+    public function __construct(public string $setting, public string $value)
+    {
+    }
 }

@@ -17,5 +17,7 @@ class SettingDeleted
 {
     use Dispatchable;
 
-    public function __construct(public string $setting) {}
+    public function __construct(public string $setting)
+    {
+    }
 }

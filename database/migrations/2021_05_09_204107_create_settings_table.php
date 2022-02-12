@@ -26,8 +26,8 @@ class CreateSettingsTable extends Migration
             $table->id();
             $table->string('key')->unique()->index();
             $table->mediumText('value')->default(null);
-            $table->enum('cast_to', \Meletisf\Settings\Enums\SettingType::getValues())
-                ->default(\Meletisf\Settings\Enums\SettingType::String);
+            $table->enum('cast_to', \Meletisf\Settings\Enums\SettingType::values())
+                ->default(\Meletisf\Settings\Enums\SettingType::String->value);
             $table->boolean('is_immutable')->default(false);
             $table->timestamps();
         });
